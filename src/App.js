@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./App.css";
 
 function App() {
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-
+  const [loading, setLoading] = useState(false);
+  const [newMsg, setNewMsg] = useState();
+  const ref = useRef(null);
   const supabase = createClient(
-    "https://prtgqwomdgjyytuhgcek.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBydGdxd29tZGdqeXl0dWhnY2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzk1NjM0NzEsImV4cCI6MTk5NTEzOTQ3MX0.kyKppd5dSjyRBqQ2uCQ9j7bk2bR9TqaJelCmxFR_3gM"
+    process.env.REACT_APP_DATABASE_LINK,
+    process.env.REACT_APP_API_KEY
   );
-
-  const channel = supabase.channel("1");
 
   const fetchMessages = async () => {
     const { data, error } = await supabase.from("ChatMessages").select();
@@ -21,7 +21,12 @@ function App() {
 
   const sendMessage = async (msg) => {
     console.log("sendMessage");
-    await supabase.from("ChatMessages").insert({ message: msg });
+    if (!loading) {
+      setLoading(true);
+      await supabase.from("ChatMessages").insert({ message: msg });
+      setMessage("");
+      setLoading(false);
+    }
   };
 
   /*   const subscribe = () => {
@@ -31,8 +36,9 @@ function App() {
   }; */
 
   const listen = () => {
+    console.log("allMessages222", allMessages);
     supabase
-      .channel("1")
+      .channel("12")
       .on(
         "postgres_changes",
         {
@@ -40,30 +46,68 @@ function App() {
           schema: "public",
           table: "ChatMessages",
         },
-        (payload) => console.log("inserted stuff", payload)
+        (payload) => {
+          console.log("inserted stuff", payload);
+          setNewMsg(payload.new);
+        }
       )
       .subscribe();
   };
 
   useEffect(() => {
+    setAllMessages([...allMessages, newMsg]);
+  }, [newMsg]);
+
+  useEffect(() => {
     /*   subscribe(); */
     /* sendMessage(); */
-    /* listen(); */
-    fetchMessages();
-  }, [message]);
+    (async () => {
+      await fetchMessages();
+
+      listen();
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (ref.current) {
+      console.log(ref.current.scrollTo);
+      ref.current.scrollIntoView();
+    }
+  }, [allMessages]);
+
+  console.log("allMessages", allMessages);
   return (
-    <div className="App">
-      {allMessages.map((message) => (
-        <p key={message.id}>{message.message}</p>
-      ))}
-      <input
-        type="text"
-        placeholder="sent msg"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={() => sendMessage(message)}>Send</button>
-      {/* <p>{message}</p> */}
+    <div className="flex justify-center items-center bg-gray-800 w-full h-screen bg-gradient-to-r from-cyan-500 to-blue-500">
+      <div className="relative w-1/5 h-4/5 bg-slate-100 rounded-lg shadow-2xl flex flex-col space-between p-5 pr-0">
+        <div className="overflow-y-auto flex flex-col space-between items-end mb-14">
+          {allMessages?.map((message, index) => (
+            <p
+              ref={index === allMessages.length - 1 ? ref : null}
+              key={index}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 px-4 mr-4 m-1 rounded-lg shadow-sm text-stone-100 hover:shadow-xl"
+            >
+              {message?.message}
+            </p>
+          ))}
+        </div>
+        <div className="absolute bottom-4 h-12 bg-white rounded">
+          <input
+            className="m-1 p-2"
+            type="text"
+            placeholder="sent msg"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button
+            className="m-1 p-2 bg-slate-900 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed"
+            onClick={() => sendMessage(message)}
+            disabled={loading}
+          >
+            Send
+          </button>
+        </div>
+        {/* <p>{message}</p> */}
+      </div>
     </div>
   );
 }
