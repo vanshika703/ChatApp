@@ -8,10 +8,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [newMsg, setNewMsg] = useState();
   const ref = useRef(null);
-  const supabase = createClient(
-    process.env.REACT_APP_DATABASE_LINK,
-    process.env.REACT_APP_API_KEY
-  );
+
+  const dbLink = process.env.REACT_APP_DATABASE_LINK;
+  const dbKey = process.env.REACT_APP_API_KEY;
+  const supabase = createClient(dbLink, dbKey);
 
   const fetchMessages = async () => {
     const { data, error } = await supabase.from("ChatMessages").select();
