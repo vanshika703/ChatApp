@@ -19,10 +19,11 @@ function App() {
     setAllMessages(data);
   };
 
-  const sendMessage = async (msg) => {
-    if (!loading && msg !== "") {
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!loading && message !== "") {
       setLoading(true);
-      await supabase.from("ChatMessages").insert({ message: msg });
+      await supabase.from("ChatMessages").insert({ message: message });
       setMessage("");
       setLoading(false);
     }
@@ -86,25 +87,23 @@ function App() {
             </p>
           ))}
         </div>
-        <div className="absolute bottom-4 h-12 w-full">
-          <input
-            className="m-1 p-2 focus:outline-none rounded-lg w-56"
-            type="text"
-            placeholder="Start Typing..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 13) sendMessage(message);
-            }}
-          />
-          <button
-            className="m-1 p-2 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700 font-bold"
-            onClick={() => sendMessage(message)}
-            disabled={loading}
-          >
-            >>
-          </button>
-        </div>
+        <form onSubmit={sendMessage}>
+          <div className="absolute bottom-4 h-12 w-full">
+            <input
+              className="m-1 p-2 focus:outline-none rounded-lg w-56"
+              type="text"
+              placeholder="Start Typing..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button
+              className="m-1 p-2 bg-slate-700 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-600 font-bold"
+              disabled={loading}
+            >
+              {">>"}
+            </button>
+          </div>
+        </form>
         {/* <p>{message}</p> */}
       </div>
     </div>
