@@ -86,9 +86,9 @@ function App() {
             </p>
           ))}
         </div>
-        <div className="absolute bottom-4 h-12 bg-white rounded w-72">
+        <div className="absolute bottom-4 h-12 w-full">
           <input
-            className="m-1 p-2 focus:outline-none"
+            className="m-1 p-2 focus:outline-none rounded-lg w-56"
             type="text"
             placeholder="Start Typing..."
             value={message}
@@ -98,11 +98,11 @@ function App() {
             }}
           />
           <button
-            className="m-1 p-2 px-4 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700"
+            className="m-1 p-2 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700 font-bold"
             onClick={() => sendMessage(message)}
             disabled={loading}
           >
-            Send
+            >>
           </button>
         </div>
         {/* <p>{message}</p> */}
