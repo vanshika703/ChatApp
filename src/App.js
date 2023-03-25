@@ -11,17 +11,16 @@ function App() {
 
   const dbLink = process.env.REACT_APP_DATABASE_LINK;
   const dbKey = process.env.REACT_APP_API_KEY;
+
   const supabase = createClient(dbLink, dbKey);
 
   const fetchMessages = async () => {
     const { data, error } = await supabase.from("ChatMessages").select();
-    console.log(data);
     setAllMessages(data);
   };
 
   const sendMessage = async (msg) => {
-    console.log("sendMessage");
-    if (!loading) {
+    if (!loading && msg !== "") {
       setLoading(true);
       await supabase.from("ChatMessages").insert({ message: msg });
       setMessage("");
@@ -47,7 +46,6 @@ function App() {
           table: "ChatMessages",
         },
         (payload) => {
-          console.log("inserted stuff", payload);
           setNewMsg(payload.new);
         }
       )
@@ -70,36 +68,37 @@ function App() {
 
   useEffect(() => {
     if (ref.current) {
-      console.log(ref.current.scrollTo);
       ref.current.scrollIntoView();
     }
   }, [allMessages]);
 
-  console.log("allMessages", allMessages);
   return (
     <div className="flex justify-center items-center bg-gray-800 w-full h-screen bg-gradient-to-r from-cyan-500 to-blue-500">
-      <div className="relative w-1/5 h-4/5 bg-slate-100 rounded-lg shadow-2xl flex flex-col space-between p-5 pr-0">
-        <div className="overflow-y-auto flex flex-col space-between items-end mb-14">
+      <div className="relative w-80 h-4/5 bg-slate-100 rounded-lg shadow-2xl flex flex-col space-between p-5 pr-0">
+        <div className="overflow-y-auto flex flex-col space-between items-end mb-14 text-right">
           {allMessages?.map((message, index) => (
             <p
               ref={index === allMessages.length - 1 ? ref : null}
               key={index}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 px-4 mr-4 m-1 rounded-lg shadow-sm text-stone-100 hover:shadow-xl"
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 px-4 mr-4 m-1 rounded-lg shadow-sm text-stone-100 hover:px-5 hover:shadow-lg"
             >
               {message?.message}
             </p>
           ))}
         </div>
-        <div className="absolute bottom-4 h-12 bg-white rounded">
+        <div className="absolute bottom-4 h-12 bg-white rounded w-72">
           <input
-            className="m-1 p-2"
+            className="m-1 p-2 focus:outline-none"
             type="text"
-            placeholder="sent msg"
+            placeholder="Start Typing..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 13) sendMessage(message);
+            }}
           />
           <button
-            className="m-1 p-2 bg-slate-900 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed"
+            className="m-0 p-2 w-20 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700"
             onClick={() => sendMessage(message)}
             disabled={loading}
           >
