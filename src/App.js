@@ -80,13 +80,13 @@ function App() {
             <p
               ref={index === allMessages.length - 1 ? ref : null}
               key={index}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 px-4 mr-4 m-1 rounded-lg shadow-sm text-stone-100 hover:px-5 hover:shadow-lg"
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 px-4 mr-4 m-1 rounded-lg shadow-sm text-stone-100  hover:shadow-lg"
             >
               {message?.message}
             </p>
           ))}
         </div>
-        <div className="absolute bottom-4 h-12 bg-white rounded w-72">
+        <div className="absolute bottom-4 h-12 bg-white rounded">
           <input
             className="m-1 p-2 focus:outline-none"
             type="text"
@@ -98,7 +98,7 @@ function App() {
             }}
           />
           <button
-            className="m-0 p-2 w-20 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700"
+            className="m-1 p-2 px-4 bg-slate-800 rounded-lg text-stone-100 disabled:bg-gray-700 disabled:cursor-not-allowed hover:bg-slate-700"
             onClick={() => sendMessage(message)}
             disabled={loading}
           >
