@@ -25,7 +25,7 @@ Clone the repo:
 
 In the project directory, you can run:
 
-to install dependency run `npm install` and to start `npm start`
+to install dependency run `yarn` and to start `yarn start`
 
 Runs the app in the development mode.
 
@@ -33,7 +33,7 @@ Open `http://localhost:3000` to view it in your browser.
 
 The page will reload when you make changes.
 
-To build the app for production run: `npm run build`
+To build the app for production run: `yarn build`
 
 Builds the app for production to the build folder.
 
@@ -44,5 +44,5 @@ The build is minified and the filenames include the hashes.
 Your app is ready to be deployed!
 
 Deployment
-Currently the app is deployed using Netlify. And it retriggers deployment on the master branch on every commit. it runs npm build and then serves the index.html generated under build folder.
+Currently the app is deployed using Netlify. And it retriggers deployment on the master branch on every commit. it runs yarn build and then serves the index.html generated under build folder.
 
