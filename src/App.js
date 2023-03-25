@@ -86,7 +86,7 @@ function App() {
             </p>
           ))}
         </div>
-        <div className="absolute bottom-4 h-12 bg-white rounded">
+        <div className="absolute bottom-4 h-12 bg-white rounded w-72">
           <input
             className="m-1 p-2 focus:outline-none"
             type="text"
